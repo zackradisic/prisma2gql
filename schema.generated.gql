@@ -1,0 +1,26 @@
+scalar DateTime
+scalar Byte
+scalar BigInt
+
+
+type Person {
+    id: Int!
+    uuid: Text!
+    name: Text!
+    email: Text
+    secondsLived: BigInt
+    cats: [Cat!]
+}
+
+type Cat {
+    id: Int!
+    uuid: Text!
+    mediaId: Text!
+    ownerId: Int!
+    name: Text!
+    createdAt: UTCTime
+    Person: Person
+    personId: Int
+    arbitraryData: Byte
+}
+

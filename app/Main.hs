@@ -27,7 +27,7 @@ argsTemplatePath :: CliArgs -> String
 argsTemplatePath (path, _, _) = fromMaybe "./template.gql" path
 
 argsOutputPath :: CliArgs -> String
-argsOutputPath (_, _, path) = fromMaybe "./schema.geneated.gql" path
+argsOutputPath (_, _, path) = fromMaybe "./schema.generated.gql" path
 
 main :: IO ()
 main = do

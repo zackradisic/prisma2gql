@@ -1,0 +1,37 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Person {
+    id           Int     @id @default(autoincrement())
+    uuid         String  @unique @default(uuid())
+    name         String
+    // @ignore
+    fingerprint  String  @unique()
+    email        String?
+    // @optional
+    secondsLived BigInt
+
+    // @optional
+    cats Cat[]
+}
+
+model Cat {
+    id            Int      @id @default(autoincrement())
+    uuid          String   @unique @default(uuid())
+    mediaId       String   @unique
+    ownerId       Int
+    name          String   @default("noice")
+    // @optional
+    createdAt     DateTime @default(now())
+    // @optional
+    Person        Person?  @relation(fields: [personId], references: [id])
+    // @optional
+    personId      Int?
+    arbitraryData Bytes?
+}
