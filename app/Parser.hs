@@ -5,11 +5,13 @@ module Parser (schema) where
 import Control.Applicative (Alternative (many), liftA2, liftA3)
 import Data.Either
 import Data.Functor ((<&>))
+import Data.Maybe (isNothing)
 import Data.Text (Text)
 import Debug.Trace (traceShow)
 import Scanner
 import Text.Megaparsec hiding (many)
 import Text.Megaparsec.Byte (string)
+import Text.Megaparsec.Char.Lexer (decimal, float)
 import Text.Megaparsec.Debug (dbg)
 import Types
 import Prelude hiding (Enum)
@@ -37,8 +39,21 @@ modelP :: Parser Model
 modelP = do
   rword "model"
   ident <- identifier
-  fields <- curlyBraces (many fieldP)
-  pure $ Model (ident, fields)
+  fieldsAndAnnotations <- curlyBraces (many $ try fieldOrAnnotationP)
+  let (fields, annotations) = fieldsAndAnnotationsToLists fieldsAndAnnotations
+  pure $ Model (ident, fields, annotations)
+
+fieldOrAnnotationP :: Parser (Maybe Field, Maybe Annotation)
+fieldOrAnnotationP = do
+  (lexeme . choice)
+    [ (\a -> (Nothing, Just a)) <$> try modelAnnotationP,
+      (\a -> (Just a, Nothing)) <$> try fieldP
+    ]
+
+modelAnnotationP :: Parser Annotation
+modelAnnotationP =
+  lexeme
+    (symbol "@" *> annotationP)
 
 fieldP :: Parser Field
 fieldP =
@@ -46,7 +61,7 @@ fieldP =
     pos <- getSourcePos
     name <- identifier
     ty <- tyP
-    annotations <- many (sc *> annotationP)
+    annotations <- many (sc *> try annotationP)
     pure $
       Field
         { fieldName = name,
@@ -143,7 +158,8 @@ keyValP = do
 valP :: Parser Value
 valP =
   (lexeme . choice)
-    [ StrValue <$> strlit,
+    [ NumValue <$> numP,
+      StrValue <$> strlit,
       CallValue <$> try callP,
       ArrValue <$> arrP,
       IdentValue <$> identifier
@@ -162,4 +178,9 @@ callP = do
   pure $ Call (ident, values)
 
 arrP :: Parser [Value]
-arrP = braces (many valP)
+arrP = braces (valP `sepBy` comma)
+
+numP :: Parser NumberValue
+numP =
+  (lexeme . choice)
+    [NumberValueFloat <$> float, NumberValueInt <$> decimal]

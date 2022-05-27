@@ -1,4 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+
+{-# HLINT ignore "Use newtype instead of data" #-}
 
 -- |
 module Types where
@@ -7,6 +10,7 @@ import Control.Monad.Trans.State.Lazy (State)
 import Data.ByteString (ByteString, isInfixOf)
 import Data.Functor.Identity (Identity)
 import Data.List (find)
+import Data.Maybe (maybeToList)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Void (Void)
@@ -49,6 +53,12 @@ data Value
   | CallValue Call
   | ArrValue [Value]
   | IdentValue Text
+  | NumValue NumberValue
+  deriving (Eq, Show)
+
+data NumberValue
+  = NumberValueInt Int
+  | NumberValueFloat Float
   deriving (Eq, Show)
 
 newtype Call
@@ -56,7 +66,7 @@ newtype Call
   deriving (Eq, Show)
 
 newtype Model
-  = Model (Text, [Field])
+  = Model (Text, [Field], [Annotation])
   deriving (Eq, Show)
 
 data Field = Field
@@ -91,8 +101,18 @@ data KeywordType
   | BytesTy
   deriving (Eq, Show)
 
+data FieldsAndAnnotations = FieldsAndAnnotations [(Maybe Field, Maybe Annotation)]
+
+fieldsAndAnnotationsToLists :: [(Maybe Field, Maybe Annotation)] -> ([Field], [Annotation])
+fieldsAndAnnotationsToLists [] = ([], [])
+fieldsAndAnnotationsToLists ((field, annotation) : xs) =
+  let (fields, annotations) = fieldsAndAnnotationsToLists xs
+   in ( maybe fields (: fields) field,
+        maybe annotations (: annotations) annotation
+      )
+
 modelName :: Model -> Text
-modelName (Model (name, _)) = name
+modelName (Model (name, _, _)) = name
 
 hasRelation :: Field -> Maybe [Annotation]
 hasRelation (Field _ _ annotations _) =

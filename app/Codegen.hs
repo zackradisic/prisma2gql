@@ -154,7 +154,7 @@ generateEnum (Enum (name, variants)) = do
     "}\n"
 
 generateModel :: Model -> CodegenState IO ()
-generateModel (Model (name, fields)) = do
+generateModel (Model (name, fields, _)) = do
   withIndentFull
     (cs $ "type " <> name <> " {")
     ( foldl
@@ -201,8 +201,8 @@ generateRequired :: ByteString -> Bool -> ByteString
 generateRequired str required = if required then str <> "!" else str
 
 modelDependencies :: Model -> [Model] -> [Text]
-modelDependencies (Model (_, [])) models = []
-modelDependencies (Model (_, xs)) models = findDependencies xs
+modelDependencies (Model (_, [], _)) models = []
+modelDependencies (Model (_, xs, _)) models = findDependencies xs
   where
     findDependencies :: [Field] -> [Text]
     findDependencies [] = []
