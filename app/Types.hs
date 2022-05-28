@@ -141,9 +141,9 @@ hasCommentAbove (Field _ _ _ pos) lines =
 hasOptionalComment :: Field -> [ByteString] -> Bool
 hasOptionalComment field@(Field _ _ _ pos) lines =
   hasCommentAbove field lines
-    && let line = unPos . sourceLine $ pos in line > 1 && isInfixOf "@optional" (lines !! (line - 2))
+    && let line = unPos . sourceLine $ pos in line > 1 && isInfixOf "@gql-optional" (lines !! (line - 2))
 
 hasIgnoreComment :: Field -> [ByteString] -> Bool
 hasIgnoreComment field@(Field _ _ _ pos) lines =
   hasCommentAbove field lines
-    && let line = unPos . sourceLine $ pos in line > 1 && isInfixOf "@ignore" (lines !! (line - 2))
+    && let line = unPos . sourceLine $ pos in line > 1 && isInfixOf "@gql-ignore" (lines !! (line - 2))

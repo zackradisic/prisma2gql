@@ -10,22 +10,31 @@ simple lil graphql code generator 4 prisma schema files
 
 ## usage
 
-`prisma2gql` will read `schema.prisma` file in the current directory and will output a `schema.generated.gql` file in
-the current directory
+```
+Usage: prisma2gql [--schema ARG] [--template ARG] [--out ARG]
+
+  Generate a GraphQL schema from a Prisma schema
+
+Available options:
+  --schema ARG             Path to Prisma schema file
+  --template ARG           Path to template
+  --out ARG                Path for output generate gql schema
+  -h,--help                Show this help text
+```
 
 ## example
 
-You can comment a field with `@optional` to make the field optional in the GraphQL schema, but remain required in the
+You can comment a field with `@gql-optional` to make the field optional in the GraphQL schema, but remain required in the
 prisma schema.
 
-You can comment a field with `@ignore` to omit the field from the graphql schema.
+You can comment a field with `@gql-ignore` to omit the field from the graphql schema.
 
 ```prisma
 model Person {
     id           Int     @id @default(autoincrement())
-    // @optional
+    // @gql-optional
     email        String
-    // @ignore
+    // @gql-ignore
     secondsLived BigInt
 }
 ```

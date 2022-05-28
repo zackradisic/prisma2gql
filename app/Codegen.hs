@@ -41,7 +41,7 @@ newCodegenEnv filePath imports lines =
   CodegenEnv
     { codegenFilePath = filePath,
       codegenIndentation = 0,
-      codegenImports = imports <> "scalar DateTime\nscalar Byte\nscalar BigInt\n",
+      codegenImports = "scalar DateTime\nscalar Byte\nscalar BigInt\n\n" <> imports,
       codegenModelIgnore = ModelIgnore [],
       codegenLines = lines,
       codegenShouldIgnoreRelations = False

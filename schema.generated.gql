@@ -2,6 +2,10 @@ scalar DateTime
 scalar Byte
 scalar BigInt
 
+type Query {
+     getPerson(id: Int!): Person
+}
+
 
 type Person {
     id: Int!

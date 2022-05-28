@@ -11,13 +11,13 @@ model Person {
     id           Int     @id @default(autoincrement())
     uuid         String  @unique @default(uuid())
     name         String
-    // @ignore
+    // @gql-ignore
     fingerprint  String  @unique()
     email        String?
-    // @optional
+    // @gql-optional
     secondsLived BigInt
 
-    // @optional
+    // @gql-optional
     cats Cat[]
 }
 
@@ -27,11 +27,11 @@ model Cat {
     mediaId       String   @unique
     ownerId       Int
     name          String   @default("noice")
-    // @optional
+    // @gql-optional
     createdAt     DateTime @default(now())
-    // @optional
+    // @gql-optional
     Person        Person?  @relation(fields: [personId], references: [id])
-    // @optional
+    // @gql-optional
     personId      Int?
     arbitraryData Bytes?
 }
