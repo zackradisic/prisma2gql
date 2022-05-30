@@ -5,8 +5,9 @@ simple lil graphql code generator 4 prisma schema files
 ## setup
 
 1. install nix
-2. run `nix shell` in the root project directory
-3. run `cabal install` this should install `prisma2gql` on your path
+2. run `nix-shell` in the root project directory
+3. run `cabal update`
+3. run `cabal install` this should install `prisma2gql` to `~/.cabal/bin/prisma2gql` so add it to your path
 
 ## usage
 
