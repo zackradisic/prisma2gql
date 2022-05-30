@@ -4,7 +4,7 @@ let
   };
 
   myNixPkgsOverlay = (nixSelf: nixSuper: {
-    myHaskellPackages = nixSelf.haskellPackages.override (oldHaskellPkgs: {
+    myHaskellPackages = nixSelf.haskell.packages.ghc8107.override (oldHaskellPkgs: {
       overrides = nixSelf.lib.composeExtensions (oldHaskellPkgs.overrides or (_: _: {}))  myHaskellPkgsOverlay;
     });
   });
